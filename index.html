@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Astronomy Tutor - বাংলা</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0f0c29;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            color: #fff;
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            min-height: 120px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            resize: vertical;
+        }
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        button {
+            background-color: #4e54c8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        button:hover {
+            background-color: #6a3093;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .answer {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            border-left: 4px solid #4e54c8;
+        }
+        .language-toggle {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .language-toggle button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin: 0 8px;
+            padding: 8px 20px;
+        }
+        .language-toggle button.active {
+            background-color: #4e54c8;
+            color: white;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .loading:after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            40% { color: white; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            60% { text-shadow: .25em 0 0 white, .5em 0 0 rgba(0,0,0,0); }
+            80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white; }
+        }
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1>AI Astronomy Tutor - বাংলা</h1>
+        <div class="language-toggle">
+            <button id="btn-en" class="active">English</button>
+            <button id="btn-bn">বাংলা</button>
+        </div>
+        
+        <textarea id="question" placeholder="Ask your astronomy question here..."></textarea>
+        <button id="ask-btn">Ask Question</button>
+        
+        <div class="loading" id="loading">Exploring the cosmos</div>
+        
+        <div class="answer" id="answer"></div>
+    </div>
+
+    <script>
+        // Create twinkling stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 100;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random properties
+                const size = Math.random() * 3;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const duration = 2 + Math.random() * 3;
+                const delay = Math.random() * 5;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Initialize stars
+        createStars();
+        
+        // DOM elements
+        const questionInput = document.getElementById('question');
+        const askBtn = document.getElementById('ask-btn');
+        const answerDiv = document.getElementById('answer');
+        const loadingDiv = document.getElementById('loading');
+        const btnEn = document.getElementById('btn-en');
+        const btnBn = document.getElementById('btn-bn');
+        
+        // Replace with your PythonAnywhere backend URL
+        const API_URL = 'https://yourusername.pythonanywhere.com/ask';
+        
+        // Language toggle
+        btnEn.addEventListener('click', () => {
+            questionInput.placeholder = 'Ask your astronomy question here...';
+            btnEn.classList.add('active');
+            btnBn.classList.remove('active');
+        });
+        
+        btnBn.addEventListener('click', () => {
+            questionInput.placeholder = 'এখানে আপনার জ্যোতির্বিজ্ঞান সম্পর্কিত প্রশ্ন করুন...';
+            btnBn.classList.add('active');
+            btnEn.classList.remove('active');
+        });
+        
+        // Ask question
+        askBtn.addEventListener('click', async () => {
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                alert('Please enter a question');
+                return;
+            }
+            
+            answerDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    answerDiv.innerHTML = `<span style="color: #ff6b6b">Error: ${data.error}</span>`;
+                } else {
+                    // Format the answer with better spacing between languages
+                    const formattedAnswer = data.answer
+                        .replace(/\n/g, '<br>')
+                        .replace(/বাংলা:/g, '<br><br><strong style="color: #4e54c8">বাংলা:</strong>');
+                    answerDiv.innerHTML = formattedAnswer;
+                }
+            } catch (error) {
+                answerDiv.innerHTML = `<span style="color: #ff6b6b">Error: ${error.message}</span>`;
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+        
+        // Allow pressing Enter to submit (Shift+Enter for new line)
+        questionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
